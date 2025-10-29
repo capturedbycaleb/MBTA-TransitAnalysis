@@ -27,12 +27,12 @@ def gather_station_wait_data(stop_dict: dict, route_id: str, direction_id: int, 
     # Using the dictionary of stops, iterates through each station ID and name
     for stop_id, name in stop_dict.items():
         all_predictions = mbta_api.get_next_arrivals(stop_id, route_id, direction_id, api_key, api_url)
-        wait_times = calculate_wait_times(all_predictions)
+        wait_times = analysis.calculate_wait_times(all_predictions)
 
         # Calculate statistics
-        mean_wait_time = find_mean_time(wait_times)
-        median_wait_time = find_median_time(wait_times)
-        st_dev_time = find_st_dev_time(wait_times)
+        mean_wait_time = analysis.find_mean_time(wait_times)
+        median_wait_time = analysis.find_median_time(wait_times)
+        st_dev_time = analysis.find_st_dev_time(wait_times)
 
         # Print detailed data for user review
         if wait_times is not None and len(wait_times) > 0:
