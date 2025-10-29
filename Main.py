@@ -1,166 +1,23 @@
+#main.py
 import requests
 import datetime
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-
-
-# ----------------------------------------------------------------------
-# ## Data Retrieval and Processing Functions
-# ----------------------------------------------------------------------
-
-def get_next_arrivals(stop_id: str, route_id: str, direction_id: int, api_key: str, api_url: str):
-    """
-    Fetches arrival predictions for a specific stop and calculates minutes until arrival.
-
-    Arguments:
-      - stop_id: station id (e.g., "place-pktrm")
-      - route_id: MBTA route id (e.g., "Green-B")
-      - direction_id: Direction of the line (0 or 1)
-      - api_key: Your MBTA V3 API key
-      - api_url: Base URL for the predictions endpoint
-
-    Returns:
-        List of minutes until next arrivals (int) or None if no valid predictions are found.
-    """
-    params = {
-        "filter[route]": route_id,
-        "filter[stop]": stop_id,
-        "filter[direction_id]": direction_id
-    }
-    headers = {}
-    if api_key:
-        headers["X-API-Key"] = api_key
-
-    try:
-        # 1. Make the API request
-        response = requests.get(api_url, params=params, headers=headers)
-        response.raise_for_status() # Raise an HTTPError for bad responses (4xx or 5xx)
-        data = response.json()
-    except requests.exceptions.RequestException as e:
-        print(f"API request error for stop {stop_id}: {e}")
-        return None
-
-    predictions = []
-
-    if not data or "data" not in data or not data["data"]:
-        return None
-
-    # Iterate through each prediction in the response
-    for prediction in data["data"]:
-        attributes = prediction.get("attributes")
-        arrival_iso = attributes.get("arrival_time")
-
-        if not arrival_iso:
-            continue
-
-        try:
-            # Clean up arrival time as it is returned in ISO format (removing colon from timezone offset)
-            iso_no_colon = arrival_iso[:-3] + arrival_iso[-2:]
-            # Parse the arrival time with timezone information
-            arrival_time = datetime.datetime.strptime(
-                iso_no_colon,
-                "%Y-%m-%dT%H:%M:%S%z"
-            )
-
-            # Get current time with the same timezone info as the arrival time
-            now = datetime.datetime.now(arrival_time.tzinfo)
-
-            # Calculate time until next arrival (a timedelta object)
-            time_until_arrival = arrival_time - now
-
-            # Convert to total minutes
-            minutes_until = int(time_until_arrival.total_seconds() / 60)
-
-            # Only add arrivals that have yet to happen (>= 0 minutes)
-            if minutes_until >= 0:
-                predictions.append(minutes_until)
-        except ValueError as e:
-            print(f"Error parsing date/time for stop {stop_id}: {e}")
-            continue
-
-    return predictions if predictions else None
-
-def calculate_wait_times(predictions: list):
-    """
-    Creates a list of wait times (intervals) between consecutive arrivals.
-
-    Args:
-        predictions: List of minutes until next arrivals.
-
-    Returns:
-        List of wait times (in minutes) or None if there are fewer than two predictions.
-    """
-    if predictions and len(predictions) > 1:
-        # Sort predictions to ensure they are in chronological order (should be, but a safeguard)
-        predictions.sort()
-        # Calculate the difference between consecutive arrival times
-        # wait time = time_to_arrival[i+1] - time_to_arrival[i]
-        list_of_wait_times = [
-            predictions[i+1] - predictions[i]
-            for i in range(len(predictions) - 1)
-        ]
-        return list_of_wait_times
-    else:
-        # Not enough data (requires at least two predictions to calculate a wait time)
-        return None
-
-# ----------------------------------------------------------------------
-# ## Statistical Analysis Functions
-# ----------------------------------------------------------------------
-
-def find_mean_time(list_of_times: list):
-    """
-    Finds the mean of a list of times using NumPy.
-
-    Args:
-        list_of_times: List of times (e.g., wait times).
-
-    Returns:
-        Mean value of times (float) or 0 if the list is empty.
-    """
-    return np.mean(list_of_times) if list_of_times else 0.0
-
-def find_median_time(list_of_times: list):
-    """
-    Finds the median of a list of times using NumPy.
-
-    Args:
-        list_of_times: List of times (e.g., wait times).
-
-    Returns:
-        Median value of times (float) or 0 if the list is empty.
-    """
-    return np.median(list_of_times) if list_of_times else 0.0
-
-def find_st_dev_time(list_of_times: list):
-    """
-    Finds the standard deviation of a list of times using NumPy.
-
-    Args:
-        list_of_times: List of times (e.g., wait times).
-
-    Returns:
-        Standard deviation value of times (float) or 0 if the list is empty.
-    """
-    return np.std(list_of_times) if list_of_times else 0.0
+# Import modules from the same directory
+import config
+import mbta_api
+import analysis
 
 # ----------------------------------------------------------------------
 # ## Main Execution and Data Aggregation
 # ----------------------------------------------------------------------
 
-def gather_station_wait_data(stop_dict: dict, route_id: str, direction_id: int, api_key: str, api_url: str):
+def gather_station_wait_data():
     """
     Iterates through all stations, retrieves predictions, calculates statistics,
     and aggregates the data into a DataFrame.
-
-    Arguments:
-      - stop_dict: Dictionary of station IDs and names.
-      - route_id: MBTA route id.
-      - direction_id: Direction of the line.
-      - api_key: Your MBTA V3 API key.
-      - api_url: Base URL for the predictions endpoint.
 
     Returns:
         A pandas DataFrame containing station, mean, median, and stdev wait times.
