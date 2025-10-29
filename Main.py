@@ -51,6 +51,44 @@ def gather_station_wait_data():
         })
 
     # Create a DataFrame for easier handling and filtering
+
+def numpyStations():
+    """
+    Main function:
+    Iterates through stations to print each station's data then stores data in a list
+    """
+    mean_dict = {}
+    medians_dict = {}
+    standarddev_dict = {}
+    # Using dictionary of stops, iterates through each station and creates a list for the variables meanTime, medianTime, standarddevTime
+    for stopId, Name in stopDict.items():
+        allPredictions = getNextDeparture(stopId, Name, directionId)
+
+        waitTimes = findWaitTimes(allPredictions)
+
+        meanWaitTime = findMeanTime(waitTimes)
+
+        medianWaitTime = findMedianTime(waitTimes)
+
+        stDevTime = findStDevTime(waitTimes)
+
+        mean_dict[Name] = findMeanTime(waitTimes)
+
+        medians_dict[Name] = findMedianTime(waitTimes)
+
+        standarddev_dict[Name] = findStDevTime(waitTimes)
+
+
+    return mean_dict, medians_dict, standarddev_dict
+
+
+mean_dict, medians_dict, standarddev_dict = numpyStations()
+means = pd.Series(mean_dict)
+medians = pd.Series(medians_dict)
+standarddevs = pd.Series(standarddev_dict)
+stops = pd.DataFrame({'Mean (in Min)': means.round(2), 'Median (in Min)': medians.round(2), 'Standard Deviation (in Min)': standarddevs.round(2)})
+stops
+    
     return pd.DataFrame(all_station_data)
 
 # ----------------------------------------------------------------------
