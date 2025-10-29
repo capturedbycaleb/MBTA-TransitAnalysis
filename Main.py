@@ -92,11 +92,12 @@ def plot_wait_times(df: pd.DataFrame, time_column: str, title: str, filename: st
 if __name__ == "__main__":
     # Gather and process all station data
     station_data_df = gather_station_wait_data(
-        stopDict,
-        routeId,
-        directionId,
-        apiKey,
-        apiUrl
+        station_data_df = gather_station_wait_data(
+        config.STOP_DICT, # Access the dictionary via the imported module name
+        config.ROUTE_ID,
+        config.DIRECTION_ID,
+        config.API_KEY,
+        config.API_URL
     )
 
     # Visualize the Mean Wait Times
