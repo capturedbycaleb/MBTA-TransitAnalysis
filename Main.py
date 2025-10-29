@@ -14,7 +14,7 @@ import analysis
 # ## Main Execution and Data Aggregation
 # ----------------------------------------------------------------------
 
-def gather_station_wait_data():
+def gather_station_wait_data(stop_dict: dict, route_id: str, direction_id: int, api_key: str, api_url: str):
     """
     Iterates through all stations, retrieves predictions, calculates statistics,
     and aggregates the data into a DataFrame.
