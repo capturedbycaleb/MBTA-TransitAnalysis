@@ -4,42 +4,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-# --- Configuration ---
-# Your API Key (ensure this is handled securely in a real application)
-apiKey = "68b143c7928743bfbf721868967a0a2c"
-# MBTA Green Line B-branch
-routeId = "Green-B"
-# 1: toward Gov Center, 0: toward Boston College (Inbound/Outbound)
-directionId = 0
-# Base URL for the MBTA V3 API predictions endpoint
-apiUrl = "https://api-v3.mbta.com/predictions"
 
-# Dictionary of each stop's ID and name (Green-B stops, BC-bound direction)
-stopDict = {
-    "place-gover": 'Government Center',
-    "place-pktrm": 'Park Street',
-    "place-boyls": 'Boylston',
-    "place-armnl": 'Arlington',
-    "place-coecl": 'Copley',
-    "place-hymnl": 'Hynes Convention Center',
-    "place-kencl": 'Kenmore',
-    "place-bland": 'Blandford Street',
-    "place-buest": 'Boston University East',
-    "place-bucen": 'Boston University Central',
-    "place-amory": 'Amory Street',
-    "place-babck": 'Babcock Street',
-    "place-brico": 'Packards Corner',
-    "place-harvd": 'Harvard Avenue',
-    "place-grigg": 'Griggs Street',
-    "place-alsgr": 'Allston Street',
-    "place-wrnst": 'Warren Street',
-    "place-wascm": 'Washington Street',
-    "place-sthld": 'Sutherland Road',
-    "place-chswk": 'Chiswick Road',
-    "place-chill": 'Chestnut Hill Avenue',
-    "place-sougr": 'South Street',
-    "place-lake": 'Boston College'
-}
 
 # ----------------------------------------------------------------------
 # ## Data Retrieval and Processing Functions
