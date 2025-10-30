@@ -9,7 +9,8 @@ API_KEY = os.getenv("MBTA_API_KEY")
 # MBTA Green Line B-branch
 ROUTE_ID = "Green-B"
 # 1: toward Gov Center, 0: toward Boston College (Inbound/Outbound)
-DIRECTION_ID = 1
+WEST_DIRECTION_ID = 1
+EAST_DIRECTION_ID = 0
 # Base URL for the MBTA V3 API predictions endpoint
 API_URL = "https://api-v3.mbta.com/predictions"
 

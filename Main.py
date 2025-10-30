@@ -27,7 +27,7 @@ def gather_station_wait_data(stop_dict: dict, route_id: str, direction_id: int, 
 
     # Using the dictionary of stops, iterates through each station ID and name
     for stop_id, name in stop_dict.items():
-        time.sleep(.5)
+        time.sleep(1.5)
         all_predictions = mbta_api.get_next_arrivals(stop_id, route_id, direction_id, api_key, api_url)
         wait_times = analysis.calculate_wait_times(all_predictions)
 
@@ -96,26 +96,20 @@ if __name__ == "__main__":
     east_station_data_df = gather_station_wait_data(
         config.STOP_DICT, # Access the dictionary via the imported module name
         config.ROUTE_ID,
-        1,
+        config.EAST_DIRECTION_ID,
         config.API_KEY,
         config.API_URL
     )
     west_station_data_df = gather_station_wait_data(
         config.STOP_DICT, # Access the dictionary via the imported module name
         config.ROUTE_ID,
-        0,
+        config.WEST_DIRECTION_ID,
         config.API_KEY,
         config.API_URL
     )
     # Visualize the Mean Wait Times
     plot_wait_times(
         east_station_data_df,
-        time_column='Mean Wait Time',
-        title='Average Wait Times at Green Line B-Branch Stations',
-        filename='mean_wait_times_bar.png'
-    )
-    plot_wait_times(
-        west_station_data_df,
         time_column='Mean Wait Time',
         title='Average Wait Times at Green Line B-Branch Stations',
         filename='mean_wait_times_bar.png'
