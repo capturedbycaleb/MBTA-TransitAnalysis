@@ -227,4 +227,4 @@ means = pd.Series(mean_dict)
 medians = pd.Series(medians_dict)
 standarddevs = pd.Series(standarddev_dict)
 stops = pd.DataFrame({'Mean (in Min)': means.round(2), 'Median (in Min)': medians.round(2), 'Standard Deviation (in Min)': standarddevs.round(2)})
-stops
+print(stops)
