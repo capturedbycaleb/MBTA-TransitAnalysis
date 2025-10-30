@@ -93,17 +93,29 @@ def plot_wait_times(df: pd.DataFrame, time_column: str, title: str, filename: st
 
 if __name__ == "__main__":
     # Gather and process all station data
-    station_data_df = gather_station_wait_data(
+    east_station_data_df = gather_station_wait_data(
         config.STOP_DICT, # Access the dictionary via the imported module name
         config.ROUTE_ID,
-        config.DIRECTION_ID,
+        1,
         config.API_KEY,
         config.API_URL
     )
-
+    west_station_data_df = gather_station_wait_data(
+        config.STOP_DICT, # Access the dictionary via the imported module name
+        config.ROUTE_ID,
+        0,
+        config.API_KEY,
+        config.API_URL
+    )
     # Visualize the Mean Wait Times
     plot_wait_times(
-        station_data_df,
+        east_station_data_df,
+        time_column='Mean Wait Time',
+        title='Average Wait Times at Green Line B-Branch Stations',
+        filename='mean_wait_times_bar.png'
+    )
+    plot_wait_times(
+        west_station_data_df,
         time_column='Mean Wait Time',
         title='Average Wait Times at Green Line B-Branch Stations',
         filename='mean_wait_times_bar.png'
