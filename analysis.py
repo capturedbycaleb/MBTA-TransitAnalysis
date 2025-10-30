@@ -12,18 +12,19 @@ def calculate_wait_times(predictions: List[int]) -> Optional[List[int]]:
     Returns:
         List of wait times (in minutes) or None if there are fewer than two predictions.
     """
-    if predictions and len(predictions) > 1:
-        predictions.sort() # Ensure chronological order
-        # Calculate the difference between consecutive arrival times
-        list_of_wait_times = [
-            predictions[i+1] - predictions[i]
-            for i in range(len(predictions) - 1)
-        ]
-        return list_of_wait_times
-    elif len(predictions) == 1:
-        list_of_wait_times = []
-        list_of_wait_times.append(predictions)
-        return list_of_wait_times
+    if predictions: 
+        if len(predictions) > 1:
+            predictions.sort() # Ensure chronological order
+            # Calculate the difference between consecutive arrival times
+            list_of_wait_times = [
+                predictions[i+1] - predictions[i]
+                for i in range(len(predictions) - 1)
+            ]
+            return list_of_wait_times
+        elif len(predictions) == 1:
+            list_of_wait_times = []
+            list_of_wait_times.append(predictions)
+            return list_of_wait_times
     else:
         return None
 
