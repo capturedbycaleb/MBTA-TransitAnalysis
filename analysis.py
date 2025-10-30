@@ -21,7 +21,8 @@ def calculate_wait_times(predictions: List[int]) -> Optional[List[int]]:
         ]
         return list_of_wait_times
     else:
-        return None
+        list_of_wait_times.append(predictions)
+        return list_of_wait_times
 
 def find_mean_time(list_of_times: Optional[List[int]]) -> float:
     """Finds the mean of a list of times using NumPy."""
