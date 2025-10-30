@@ -21,6 +21,7 @@ def calculate_wait_times(predictions: List[int]) -> Optional[List[int]]:
         ]
         return list_of_wait_times
     else:
+        list_of_wait_times = []
         list_of_wait_times.append(predictions)
         return list_of_wait_times
 
