@@ -27,7 +27,7 @@ def gather_station_wait_data(stop_dict: dict, route_id: str, direction_id: int, 
 
     # Using the dictionary of stops, iterates through each station ID and name
     for stop_id, name in stop_dict.items():
-        time.sleep(1.5)
+        time.sleep(.5)
         all_predictions = mbta_api.get_next_arrivals(stop_id, route_id, direction_id, api_key, api_url)
         wait_times = analysis.calculate_wait_times(all_predictions)
 
